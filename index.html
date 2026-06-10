@@ -115,30 +115,39 @@
     margin-bottom:18px;
   }
   .hl{display:block;}
+  /* Fluid headline sizes: each line must FIT at every width — clipping is the bug, not the fix. */
   .hl--towards{
     font-family:'Archivo Black',sans-serif;
     color:var(--offwhite);
-    font-size:clamp(62px,11vw,148px);
+    font-size:clamp(40px,13.5vw,148px);
     line-height:.96;letter-spacing:-1px;
   }
   .hl--excellence{
     font-family:'Unbounded',sans-serif;font-weight:900;
     color:var(--lime);
-    font-size:clamp(40px,7vw,96px);
+    font-size:clamp(24px,6.6vw,84px);
     line-height:1.05;
-    letter-spacing:clamp(2px,.6vw,8px);
-    margin-right:clamp(-2px,-.6vw,-8px); /* swallow trailing tracking space */
+    letter-spacing:clamp(1px,.5vw,7px);
+    margin-right:clamp(-1px,-.5vw,-7px); /* swallow trailing tracking space */
   }
   .hl--academy{
     font-family:'Archivo Black',sans-serif;
     color:transparent;
     -webkit-text-stroke:2px #F5F5F0;
-    font-size:clamp(62px,11vw,148px);
+    font-size:clamp(40px,13.5vw,148px);
     line-height:.96;letter-spacing:-1px;
     opacity:.55;
   }
   .hero__status{margin-top:28px;}
   .hero__status .pill{font-size:clamp(11px,1.5vw,14px);}
+  .hero__intake{
+    font-family:'Syne Mono',monospace;
+    color:var(--muted);
+    font-size:clamp(11px,1.3vw,14px);
+    letter-spacing:2px;text-transform:uppercase;
+    margin-top:14px;
+  }
+  .hero__intake b{color:var(--cream);font-weight:400;}
 
   /* ---- positioning strip ---- */
   .positioning{
@@ -151,7 +160,7 @@
     font-size:clamp(26px,4.4vw,56px);
     line-height:1.12;
     color:var(--offwhite);
-    max-width:18ch;
+    max-width:26ch;
   }
   .positioning h2 em{font-style:normal;color:var(--lime);}
   .positioning .sub{
@@ -319,13 +328,14 @@
       <span class="hl hl--academy">ACADEMY</span>
     </h1>
     <p class="hero__status"><span class="pill">Admissions opening soon — September 2026</span></p>
+    <p class="hero__intake">First intake · <b>JSS 1 only</b> · one class, one standard</p>
   </div>
 </header>
 
 <!-- ============ POSITIONING ============ -->
 <section class="positioning">
-  <h2 class="reveal">A STEM curriculum inspired by <em>AI</em>.</h2>
-  <p class="sub reveal">World-class standards. Rooted in Owo.</p>
+  <h2 class="reveal">STEM-inspired education. International standards.</h2>
+  <p class="sub reveal">Rooted in Owo.</p>
   <ul class="stem-tags reveal">
     <li>Science</li>
     <li>Technology</li>
@@ -342,7 +352,7 @@
     <img src="qr.png" width="240" height="240" alt="QR code — chat with Towards Excellence Academy on WhatsApp">
   </div>
   <p class="qr__coords reveal">wa.me · virtual assistant · 24/7</p>
-  <p class="reveal"><a class="qr__cta" href="https://wa.me/2348067716916?text=Hi%20TEA">Chat with TEA →</a></p>
+  <p class="reveal"><a class="qr__cta" href="https://wa.me/2348067716916?text=Hi%20TEA%2C%20I%27d%20like%20to%20ask%20about%20JSS%201%20admission">Chat with TEA →</a></p>
 </section>
 
 <!-- ============ FOOTER ============ -->

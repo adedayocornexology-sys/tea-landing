@@ -1,5 +1,26 @@
 # TEA Landing — Build & Verification Report
 
+## v1.1 revision (2026-06-10, after Cornelius's review)
+
+Three corrections applied from `correction.txt`, all curl-verified live:
+
+1. **Headline overflow fixed for real** — v1.0's clamp() floors clipped TOWARDS/EXCELLENCE/ACADEMY on narrow phones, and the page-level scrollWidth check couldn't see it (clipped text doesn't scroll). Headlines are now fully fluid, and `verify.sh` measures each headline line's rendered Range rect at 320/390/768/1440 px. Executed evidence (all 12 fit-checks PASS), e.g.:
+   ```
+   PASS  headline "EXCELLENCE" fits at 320px — left=24.0 right=245.0 viewport=320
+   PASS  headline "TOWARDS" fits at 390px — left=25.5 right=311.2 viewport=390
+   ```
+2. **AI goes dark** — public copy is now "STEM-inspired education. International standards. / Rooted in Owo." and verify asserts `\bAI\b` = 0 in visible text: `PASS  no standalone "AI" in public copy — matches=0`.
+3. **JSS 1 selective intake + pre-qualified QR** — hero carries "First intake · JSS 1 only · one class, one standard"; QR and CTA now encode `https://wa.me/2348067716916?text=Hi%20TEA%2C%20I%27d%20like%20to%20ask%20about%20JSS%201%20admission`, decode-verified:
+   ```
+   Decoded QR string: https://wa.me/2348067716916?text=Hi%20TEA%2C%20I%27d%20like%20to%20ask%20about%20JSS%201%20admission
+   ```
+
+Full v1.1 suite: 25/25 checks, `verify.sh` exit 0. Error Ledger updated with all three lessons. Live-site re-check after redeploy is appended below the v1.0 report.
+
+---
+
+# v1.0 original report
+
 **Live production URL:** https://tea-landing-psi.vercel.app
 **GitHub repository:** https://github.com/adedayocornexology-sys/tea-landing
 

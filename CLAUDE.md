@@ -2,7 +2,7 @@
 
 ## Project
 
-Single-page landing site for **Towards Excellence Academy (TEA)**, a new STEM school in Owo, Ondo State, Nigeria, resuming September 2026. Audience: parents in Owo/Ondo State who want world-class education for their children without leaving home. The page's one job: signal that admissions are opening soon and route interested parents to the school's WhatsApp virtual assistant — via QR code for desktop visitors and a tap-to-chat button (`https://wa.me/2348067716916?text=Hi%20TEA`) for mobile visitors.
+Single-page landing site for **Towards Excellence Academy (TEA)**, a new STEM school in Owo, Ondo State, Nigeria, resuming September 2026. Audience: parents in Owo/Ondo State who want world-class education for their children without leaving home. The page's one job: signal that admissions are opening soon and route interested parents to the school's WhatsApp virtual assistant — via QR code for desktop visitors and a tap-to-chat button for mobile visitors. The prefill pre-qualifies the bot conversation: `https://wa.me/2348067716916?text=Hi%20TEA%2C%20I%27d%20like%20to%20ask%20about%20JSS%201%20admission`.
 
 ## Brand tokens (condensed)
 
@@ -39,3 +39,7 @@ node -e "const{PNG}=require('pngjs');const j=require('jsqr');const p=PNG.sync.re
 ## Error Ledger
 
 Every time Cornelius corrects a mistake in this project, append a one-line lesson here. This file is the project's memory.
+
+- 2026-06-10 — Headline overflow slipped past verify.sh: page scrollWidth passes when text is *clipped*, not scrolling; verify now measures each headline line's Range rect at 320/390/768/1440. Clipping is the bug, not the fix.
+- 2026-06-10 — "AI" removed from all public copy (verify asserts `\bAI\b` = 0 in visible text): the AI is the secret engine, never the billboard — competitors copy slogans, not systems.
+- 2026-06-10 — QR prefill must arrive pre-qualified ("Hi TEA, I'd like to ask about JSS 1 admission"); JSS 1-only intake is selective positioning, not small capacity.

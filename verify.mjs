@@ -7,7 +7,7 @@ import jsQR from 'jsqr';
 import { chromium } from 'playwright';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const EXPECTED_URL = 'https://wa.me/2348067716916?text=Hi%20TEA';
+const EXPECTED_URL = 'https://wa.me/2348067716916?text=Hi%20TEA%2C%20I%27d%20like%20to%20ask%20about%20JSS%201%20admission';
 let failures = 0;
 
 function check(name, ok, detail) {
@@ -49,6 +49,38 @@ function check(name, ok, detail) {
     );
     await page.screenshot({ path: path.join(ROOT, vp.shot), fullPage: true });
     console.log(`Saved ${vp.shot}`);
+    await page.close();
+  }
+
+  // Element-level headline fit check at four widths. Page scrollWidth misses clipped
+  // text (clipping is the bug, not the fix) — measure the rendered glyphs via Range rects.
+  for (const width of [320, 390, 768, 1440]) {
+    const page = await browser.newPage({ viewport: { width, height: 900 } });
+    await page.goto(pageUrl, { waitUntil: 'networkidle' });
+    const lines = await page.evaluate(() => {
+      return [...document.querySelectorAll('.hl')].map(el => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const r = range.getBoundingClientRect();
+        return { text: el.textContent.trim(), left: r.left, right: r.right };
+      });
+    });
+    for (const l of lines) {
+      check(
+        `headline "${l.text}" fits at ${width}px`,
+        l.left >= 0 && l.right <= width,
+        `left=${l.left.toFixed(1)} right=${l.right.toFixed(1)} viewport=${width}`
+      );
+    }
+    await page.close();
+  }
+
+  // Public copy must not name the engine: \bAI\b in visible text = 0.
+  {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    await page.goto(pageUrl, { waitUntil: 'networkidle' });
+    const aiHits = await page.evaluate(() => (document.body.innerText.match(/\bAI\b/g) || []).length);
+    check('no standalone "AI" in public copy', aiHits === 0, `matches=${aiHits}`);
     await page.close();
   }
   await browser.close();
