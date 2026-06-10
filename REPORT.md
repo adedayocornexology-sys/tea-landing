@@ -113,3 +113,18 @@ See the verifier verdict appended at the bottom of this file — run in a separa
 
 - Mobile hero map initially over-zoomed (rendered as a green sheet); constrained to `width:min(96%,440px)` at top of hero on mobile so the full Ondo silhouette shows. Desktop keeps the spec layout (96% hero height, offset left of center).
 - Headless chromium does not reliably fire IntersectionObserver, which left scroll-reveal sections invisible in screenshots. Page now has a 2.5 s failsafe that reveals all content regardless, and the verify script screenshots the revealed end-state.
+
+---
+
+## v1.1 live-site re-check (executed after redeploy)
+
+```
+HTTP status: 200
+TOWARDS
+#CAFF00
+wa.me/2348067716916?text=Hi%20TEA%2C%20I%27d%20like%20to%20ask%20about%20JSS%201%20admission
+JSS 1 only
+STEM-inspired education
+\bAI\b matches in live body: 0 (clean)
+LIVE V1.1 CHECK: PASS
+```
