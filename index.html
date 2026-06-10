@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Towards Excellence Academy — Owo, Ondo State</title>
+<meta name="description" content="Towards Excellence Academy — a new STEM school in Owo, Ondo State. Admissions opening September 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Unbounded:wght@900&family=Syne+Mono&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0A;
+    --green:#1A5C2A;
+    --lime:#CAFF00;
+    --offwhite:#F5F5F0;
+    --cream:#EEE8D5;
+    --muted:#7A8C7E;
+    --map-fill:rgba(26,92,42,0.35);
+    --hairline:rgba(202,255,0,0.15);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  html,body{
+    background:var(--bg);
+    color:var(--offwhite);
+    overflow-x:hidden;
+    overflow-x:clip;
+  }
+  body{
+    font-family:'Space Grotesk',sans-serif;
+    line-height:1.5;
+    border-left:6px solid var(--lime);
+    min-height:100vh;
+    position:relative;
+  }
+
+  /* ---- texture layers ---- */
+  .noise{
+    position:fixed;inset:0;z-index:40;pointer-events:none;
+    opacity:.45;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .scanlines{
+    position:fixed;inset:0;z-index:41;pointer-events:none;opacity:.08;
+    background:repeating-linear-gradient(to bottom,transparent 0 3px,#F5F5F0 3px 4px);
+  }
+
+  /* ---- shared bits ---- */
+  .mono{font-family:'Syne Mono',monospace;}
+  .pill{
+    display:inline-block;
+    background:#CAFF00;color:#0A0A0A;
+    font-family:'Syne Mono',monospace;
+    letter-spacing:1.5px;padding:6px 12px;border-radius:2px;text-transform:uppercase;
+    font-size:12px;
+  }
+  .pill--ghost{
+    background:transparent;color:var(--muted);
+    border:1px solid var(--hairline);
+  }
+  .dot{
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    background:var(--lime);vertical-align:middle;
+    box-shadow:0 0 10px rgba(202,255,0,.8);
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:1;box-shadow:0 0 6px rgba(202,255,0,.8);}
+    50%{opacity:.45;box-shadow:0 0 16px rgba(202,255,0,.4);}
+  }
+
+  /* ---- hero ---- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    min-height:100svh;
+    display:flex;flex-direction:column;justify-content:space-between;
+    padding:clamp(18px,3vw,40px) clamp(18px,5vw,72px);
+    border-bottom:1px solid var(--hairline);
+    overflow:hidden;
+  }
+  .hero__map{
+    position:absolute;
+    top:6%;left:50%;
+    transform:translateX(-50%);
+    width:min(96%,440px);
+    height:auto;
+    z-index:0;
+    pointer-events:none;
+  }
+  @media (min-width:900px){
+    .hero__map{
+      top:50%;left:30%;
+      transform:translate(-50%,-50%);
+      width:auto;
+      height:96%;
+    }
+  }
+  .hero__top{
+    position:relative;z-index:2;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    flex-wrap:wrap;
+  }
+  .hero__bottom{
+    position:relative;z-index:2;
+    padding-top:48px;
+  }
+  .hero__label{
+    font-family:'Syne Mono',monospace;
+    color:var(--muted);
+    font-size:clamp(12px,1.4vw,15px);
+    letter-spacing:2px;text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:18px;
+  }
+  .hl{display:block;}
+  .hl--towards{
+    font-family:'Archivo Black',sans-serif;
+    color:var(--offwhite);
+    font-size:clamp(62px,11vw,148px);
+    line-height:.96;letter-spacing:-1px;
+  }
+  .hl--excellence{
+    font-family:'Unbounded',sans-serif;font-weight:900;
+    color:var(--lime);
+    font-size:clamp(40px,7vw,96px);
+    line-height:1.05;
+    letter-spacing:clamp(2px,.6vw,8px);
+    margin-right:clamp(-2px,-.6vw,-8px); /* swallow trailing tracking space */
+  }
+  .hl--academy{
+    font-family:'Archivo Black',sans-serif;
+    color:transparent;
+    -webkit-text-stroke:2px #F5F5F0;
+    font-size:clamp(62px,11vw,148px);
+    line-height:.96;letter-spacing:-1px;
+    opacity:.55;
+  }
+  .hero__status{margin-top:28px;}
+  .hero__status .pill{font-size:clamp(11px,1.5vw,14px);}
+
+  /* ---- positioning strip ---- */
+  .positioning{
+    padding:clamp(64px,10vw,128px) clamp(18px,5vw,72px);
+    border-bottom:1px solid var(--hairline);
+    position:relative;z-index:2;
+  }
+  .positioning h2{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(26px,4.4vw,56px);
+    line-height:1.12;
+    color:var(--offwhite);
+    max-width:18ch;
+  }
+  .positioning h2 em{font-style:normal;color:var(--lime);}
+  .positioning .sub{
+    margin-top:14px;
+    color:var(--cream);
+    font-size:clamp(15px,1.8vw,20px);
+    opacity:.8;
+  }
+  .stem-tags{
+    margin-top:clamp(32px,5vw,56px);
+    display:flex;flex-wrap:wrap;gap:10px;
+    list-style:none;
+  }
+  .stem-tags li{
+    font-family:'Syne Mono',monospace;
+    font-size:clamp(11px,1.4vw,14px);
+    letter-spacing:2px;
+    color:var(--muted);
+    border:1px solid var(--hairline);
+    padding:8px 14px;border-radius:2px;
+  }
+  .stem-tags li::before{content:"// ";color:var(--lime);}
+
+  /* ---- QR block ---- */
+  .qr{
+    padding:clamp(64px,10vw,128px) clamp(18px,5vw,72px);
+    border-bottom:1px solid var(--hairline);
+    text-align:center;
+    position:relative;z-index:2;
+  }
+  .qr h2{
+    font-family:'Archivo Black',sans-serif;
+    font-size:clamp(28px,4.4vw,52px);
+    line-height:1.1;
+  }
+  .qr .sub{
+    margin-top:12px;color:var(--cream);opacity:.8;
+    font-size:clamp(15px,1.8vw,19px);
+  }
+  .qr__card{
+    margin:36px auto 0;
+    background:#EEE8D5;
+    width:fit-content;
+    padding:18px;
+    border-radius:2px;
+    border:1px solid var(--hairline);
+  }
+  .qr__card img{
+    display:block;
+    width:240px;height:240px;
+    image-rendering:pixelated;
+  }
+  .qr__coords{
+    font-family:'Syne Mono',monospace;
+    color:var(--muted);font-size:11px;letter-spacing:2px;
+    margin-top:14px;text-transform:uppercase;
+  }
+  .qr__cta{
+    display:inline-block;
+    margin-top:28px;
+    background:#CAFF00;color:#0A0A0A;
+    font-family:'Syne Mono',monospace;
+    font-size:15px;letter-spacing:2px;text-transform:uppercase;
+    text-decoration:none;
+    padding:16px 34px;border-radius:2px;
+    transition:transform .15s ease;
+  }
+  .qr__cta:hover{transform:translateY(-2px);}
+  .qr__cta:active{transform:translateY(0);}
+
+  /* ---- footer ---- */
+  footer{
+    padding:26px clamp(18px,5vw,72px);
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+    flex-wrap:wrap;
+    font-family:'Syne Mono',monospace;
+    font-size:12px;letter-spacing:1.5px;
+    color:var(--muted);text-transform:uppercase;
+    position:relative;z-index:2;
+  }
+  footer .loc{display:flex;align-items:center;gap:10px;}
+  footer .tag{color:var(--lime);}
+
+  /* ---- map svg internals ---- */
+  .ripple{animation:ripple 4s ease-out infinite;transform-origin:277px 212px;}
+  .ripple--2{animation-delay:1.3s;}
+  .ripple--3{animation-delay:2.6s;}
+  @keyframes ripple{
+    0%{transform:scale(.55);opacity:.5;}
+    100%{transform:scale(1.25);opacity:0;}
+  }
+  .pin-glow{animation:pulse 2.4s ease-in-out infinite;}
+
+  /* ---- scroll reveal (JS-gated so no-JS stays visible) ---- */
+  .js .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
+  .js .reveal.visible{opacity:1;transform:none;}
+
+  @media (prefers-reduced-motion:reduce){
+    .dot,.ripple,.pin-glow{animation:none;}
+    .js .reveal{opacity:1;transform:none;transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="noise" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <svg class="hero__map" viewBox="0 0 420 530" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="8" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+
+    <!-- cartographic grid -->
+    <g stroke="rgba(202,255,0,0.07)" stroke-width="0.5" stroke-dasharray="3,7">
+      <line x1="0" y1="154" x2="420" y2="154"/>
+      <line x1="0" y1="269" x2="420" y2="269"/>
+      <line x1="0" y1="385" x2="420" y2="385"/>
+      <line x1="133" y1="0" x2="133" y2="530"/>
+      <line x1="267" y1="0" x2="267" y2="530"/>
+    </g>
+
+    <!-- Ondo State boundary -->
+    <path d="M 230,77 L 279,29 L 352,19 L 388,67 L 364,115 L 339,154 L 315,192
+             L 303,231 L 279,269 L 255,308 L 230,346 L 206,385 L 182,423
+             L 158,462 L 121,471 L 85,490 L 49,481 L 12,442 L 12,385
+             L 24,327 L 36,269 L 49,212 L 61,154 L 85,106 L 133,77 L 182,48 Z"
+          fill="rgba(26,92,42,0.35)" stroke="#CAFF00" stroke-width="1.2" filter="url(#glow)"/>
+
+    <!-- Owo LGA highlight zone -->
+    <path d="M 277,212 L 310,190 L 345,198 L 355,222 L 340,250 L 315,262 L 288,258 L 268,238 Z"
+          fill="rgba(202,255,0,0.08)" stroke="rgba(202,255,0,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
+
+    <!-- Owo pin -->
+    <g>
+      <circle class="ripple" cx="277" cy="212" r="24" stroke="#CAFF00" stroke-width="1" opacity="0.30"/>
+      <circle class="ripple ripple--2" cx="277" cy="212" r="40" stroke="#CAFF00" stroke-width="1" opacity="0.18"/>
+      <circle class="ripple ripple--3" cx="277" cy="212" r="58" stroke="#CAFF00" stroke-width="1" opacity="0.10"/>
+      <circle cx="277" cy="212" r="30" fill="rgba(202,255,0,0.10)"/>
+      <circle cx="277" cy="212" r="16" fill="rgba(202,255,0,0.18)"/>
+      <circle class="pin-glow" cx="277" cy="212" r="6" fill="#CAFF00" filter="url(#glow)"/>
+      <circle cx="277" cy="212" r="3" fill="#CAFF00"/>
+      <text x="296" y="208" font-family="Syne Mono, monospace" font-size="13" fill="#CAFF00" opacity="0.65" letter-spacing="1">OWO · 7.1989°N</text>
+    </g>
+  </svg>
+
+  <div class="hero__top">
+    <span class="pill">EST. 2026</span>
+    <span class="pill pill--ghost">OWO · NG</span>
+  </div>
+
+  <div class="hero__bottom">
+    <p class="hero__label"><span class="dot" aria-hidden="true"></span> New School · Owo, Ondo State</p>
+    <h1>
+      <span class="hl hl--towards">TOWARDS</span>
+      <span class="hl hl--excellence">EXCELLENCE</span>
+      <span class="hl hl--academy">ACADEMY</span>
+    </h1>
+    <p class="hero__status"><span class="pill">Admissions opening soon — September 2026</span></p>
+  </div>
+</header>
+
+<!-- ============ POSITIONING ============ -->
+<section class="positioning">
+  <h2 class="reveal">A STEM curriculum inspired by <em>AI</em>.</h2>
+  <p class="sub reveal">World-class standards. Rooted in Owo.</p>
+  <ul class="stem-tags reveal">
+    <li>Science</li>
+    <li>Technology</li>
+    <li>Engineering</li>
+    <li>Mathematics</li>
+  </ul>
+</section>
+
+<!-- ============ QR ============ -->
+<section class="qr">
+  <h2 class="reveal">Talk to us before resumption.</h2>
+  <p class="sub reveal">Scan to chat with our virtual assistant on WhatsApp.</p>
+  <div class="qr__card reveal">
+    <img src="qr.png" width="240" height="240" alt="QR code — chat with Towards Excellence Academy on WhatsApp">
+  </div>
+  <p class="qr__coords reveal">wa.me · virtual assistant · 24/7</p>
+  <p class="reveal"><a class="qr__cta" href="https://wa.me/2348067716916?text=Hi%20TEA">Chat with TEA →</a></p>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <span class="loc"><span class="dot" aria-hidden="true"></span> Owo, Ondo State, Nigeria</span>
+  <span class="tag">#TowardsExcellence</span>
+  <span>Est. 2026</span>
+</footer>
+
+<script>
+  document.documentElement.classList.add('js');
+  var reveals = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  },{threshold:0.15});
+  reveals.forEach(function(el){ io.observe(el); });
+  // Failsafe: content must never stay hidden if the observer misbehaves.
+  setTimeout(function(){
+    reveals.forEach(function(el){ el.classList.add('visible'); });
+  }, 2500);
+</script>
+</body>
+</html>
