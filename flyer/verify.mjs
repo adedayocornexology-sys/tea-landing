@@ -47,6 +47,22 @@ await page.waitForTimeout(300);
   }
 }
 
+// 1b. Nothing overflows the canvas vertically (enlarged banner type must still fit).
+{
+  const v = await page.evaluate(() => {
+    const frame = document.getElementById('frame');
+    const fb = frame.getBoundingClientRect();
+    const foot = document.querySelector('footer').getBoundingClientRect();
+    return { footBottom: foot.bottom, frameBottom: fb.bottom,
+             scrollH: frame.scrollHeight, clientH: frame.clientHeight };
+  });
+  check('content fits canvas height (footer inside frame)',
+    v.footBottom <= v.frameBottom + 0.5,
+    `footerBottom=${v.footBottom.toFixed(1)} frameBottom=${v.frameBottom.toFixed(1)}`);
+  check('no vertical scroll overflow',
+    v.scrollH <= v.clientH + 0.5, `scrollH=${v.scrollH} clientH=${v.clientH}`);
+}
+
 // 2. Real fonts loaded — the rendered display faces must actually be present.
 {
   const loaded = await page.evaluate(() => ({
