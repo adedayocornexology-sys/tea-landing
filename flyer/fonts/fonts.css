@@ -1,0 +1,23 @@
+/* Local TEA brand fonts — committed so renders never depend on fonts.googleapis.com
+   (blocked in cloud sessions; a missing-font silent serif fallback breaks brand fidelity). */
+@font-face{
+  font-family:'Archivo Black';
+  font-style:normal;font-weight:400;font-display:block;
+  src:url('./ArchivoBlack-400.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Unbounded';
+  font-style:normal;font-weight:900;font-display:block;
+  src:url('./Unbounded-900.woff2') format('woff2');
+}
+@font-face{
+  font-family:'Syne Mono';
+  font-style:normal;font-weight:400;font-display:block;
+  src:url('./SyneMono-400.woff2') format('woff2');
+}
+@font-face{
+  /* Space Grotesk ships as a variable font (300–700); one file covers 400 + 700. */
+  font-family:'Space Grotesk';
+  font-style:normal;font-weight:300 700;font-display:block;
+  src:url('./SpaceGrotesk-var.woff2') format('woff2');
+}

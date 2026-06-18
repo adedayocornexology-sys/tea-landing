@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TEA — Admissions Open Flyer</title>
+<!-- Local fonts only: fonts.googleapis.com is blocked in cloud renders and would
+     silently fall back to serif, breaking brand fidelity. -->
+<link rel="stylesheet" href="./fonts/fonts.css">
+<style>
+  :root{
+    /* brand tokens — lifted verbatim from index.html :root */
+    --bg:#0A0A0A;
+    --green:#1A5C2A;
+    --lime:#CAFF00;
+    --offwhite:#F5F5F0;
+    --cream:#EEE8D5;
+    --muted:#7A8C7E;
+    --map-fill:rgba(26,92,42,0.35);
+    --hairline:rgba(202,255,0,0.15);
+
+    /* canvas size + scale — overridden from ?w=&h= query so the same file emits
+       the story flyer (1080x1920) and, later, the campaign banners. */
+    --w:1080px;
+    --h:1920px;
+    --s:1;          /* px scale = min(w/1080, h/1920) */
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:#000;}
+  body{display:flex;align-items:flex-start;justify-content:flex-start;}
+
+  /* unit helper: u(n) = n design-px at current scale */
+  .frame{
+    position:relative;
+    width:var(--w);height:var(--h);
+    background:var(--bg);
+    color:var(--offwhite);
+    font-family:'Space Grotesk',sans-serif;
+    overflow:hidden;
+    border-left:calc(12px * var(--s)) solid var(--lime);
+    --pad:calc(64px * var(--s));
+    --gap:calc(40px * var(--s));
+  }
+
+  /* ---- texture layers (same as site) ---- */
+  .noise{
+    position:absolute;inset:0;z-index:6;pointer-events:none;
+    opacity:.40;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .scanlines{
+    position:absolute;inset:0;z-index:7;pointer-events:none;opacity:.07;
+    background:repeating-linear-gradient(to bottom,transparent 0 3px,#F5F5F0 3px 4px);
+  }
+  /* vignette to seat the message over the map texture */
+  .vignette{
+    position:absolute;inset:0;z-index:3;pointer-events:none;
+    background:radial-gradient(120% 70% at 50% 30%,transparent 40%,rgba(10,10,10,0.55) 100%);
+  }
+
+  /* ---- Ondo map: the signature motif. Texture, not subject — low grid density,
+         but the boundary + Owo pin still GLOW (brand law). ---- */
+  .map{
+    position:absolute;
+    z-index:1;pointer-events:none;
+    bottom:calc(250px * var(--s));
+    right:calc(-150px * var(--s));
+    height:calc(1080px * var(--s));
+    width:auto;
+    opacity:.72;
+  }
+
+  /* ---- shared bits (same vocabulary as site) ---- */
+  .mono{font-family:'Syne Mono',monospace;}
+  .pill{
+    display:inline-block;
+    background:var(--lime);color:var(--bg);
+    font-family:'Syne Mono',monospace;
+    letter-spacing:calc(2px * var(--s));text-transform:uppercase;
+    padding:calc(9px * var(--s)) calc(18px * var(--s));border-radius:calc(3px * var(--s));
+    font-size:calc(21px * var(--s));line-height:1;
+  }
+  .pill--ghost{
+    background:transparent;color:var(--muted);
+    border:1px solid var(--hairline);
+  }
+  .dot{
+    display:inline-block;
+    width:calc(11px * var(--s));height:calc(11px * var(--s));border-radius:50%;
+    background:var(--lime);vertical-align:middle;
+    box-shadow:0 0 calc(12px * var(--s)) rgba(202,255,0,.8);
+  }
+
+  /* ---- content grid ---- */
+  .content{
+    position:relative;z-index:5;
+    height:100%;
+    padding:var(--pad);
+    display:flex;flex-direction:column;
+  }
+
+  /* top lockup */
+  .top{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:calc(20px * var(--s));
+  }
+  .lockup{display:flex;align-items:center;gap:calc(22px * var(--s));}
+  .lockup img{
+    width:calc(116px * var(--s));height:calc(116px * var(--s));
+    display:block;
+    filter:drop-shadow(0 0 calc(16px * var(--s)) rgba(202,255,0,0.12));
+  }
+  .lockup .word{
+    font-family:'Archivo Black',sans-serif;
+    font-size:calc(27px * var(--s));line-height:1.04;letter-spacing:calc(.5px * var(--s));
+    color:var(--offwhite);text-transform:uppercase;
+  }
+  .lockup .word b{color:var(--lime);font-weight:400;}
+
+  .eyebrow{
+    margin-top:calc(30px * var(--s));
+    font-family:'Syne Mono',monospace;color:var(--muted);
+    font-size:calc(20px * var(--s));letter-spacing:calc(3px * var(--s));text-transform:uppercase;
+    display:flex;align-items:center;gap:calc(12px * var(--s));
+  }
+
+  /* hero block */
+  .hero{margin-top:calc(40px * var(--s));}
+  .hero .session{margin-bottom:calc(26px * var(--s));}
+  .hl{display:block;}
+  .hl--admissions{
+    font-family:'Archivo Black',sans-serif;color:var(--offwhite);
+    font-size:calc(122px * var(--s));line-height:.94;letter-spacing:calc(-2px * var(--s));
+  }
+  .hl--open{
+    font-family:'Unbounded',sans-serif;font-weight:900;color:var(--lime);
+    font-size:calc(170px * var(--s));line-height:.98;letter-spacing:calc(2px * var(--s));
+  }
+  .hero .sub{
+    margin-top:calc(28px * var(--s));
+    font-family:'Syne Mono',monospace;color:var(--cream);
+    font-size:calc(28px * var(--s));letter-spacing:calc(1px * var(--s));
+  }
+  .hero .sub b{color:var(--lime);font-weight:400;}
+
+  /* positioning */
+  .positioning{
+    margin-top:calc(40px * var(--s));
+    font-family:'Archivo Black',sans-serif;color:var(--offwhite);
+    font-size:calc(40px * var(--s));line-height:1.16;max-width:20ch;
+  }
+  .positioning em{font-style:normal;color:var(--lime);}
+
+  /* why choose us */
+  .why{margin-top:calc(44px * var(--s));}
+  .why h3{
+    font-family:'Syne Mono',monospace;color:var(--muted);
+    font-size:calc(20px * var(--s));letter-spacing:calc(4px * var(--s));text-transform:uppercase;
+    margin-bottom:calc(22px * var(--s));
+    display:flex;align-items:center;gap:calc(14px * var(--s));
+  }
+  .why h3::after{content:"";flex:1;height:1px;background:var(--hairline);}
+  .cell{
+    border-top:1px solid var(--hairline);
+    padding:calc(22px * var(--s)) 0;
+    display:flex;gap:calc(22px * var(--s));align-items:baseline;
+  }
+  .cell:last-child{border-bottom:1px solid var(--hairline);}
+  .cell .idx{
+    font-family:'Syne Mono',monospace;color:var(--lime);
+    font-size:calc(20px * var(--s));letter-spacing:calc(1px * var(--s));
+    min-width:calc(56px * var(--s));
+  }
+  .cell .body{flex:1;}
+  .cell .t{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--offwhite);
+    font-size:calc(31px * var(--s));letter-spacing:calc(.3px * var(--s));
+    margin-bottom:calc(7px * var(--s));
+  }
+  .cell .d{
+    font-family:'Space Grotesk',sans-serif;color:var(--muted);
+    font-size:calc(21px * var(--s));line-height:1.45;
+  }
+
+  /* CTA + QR */
+  .cta{
+    margin-top:auto;
+    display:flex;justify-content:space-between;align-items:flex-end;
+    gap:calc(28px * var(--s));
+    padding-top:calc(40px * var(--s));
+  }
+  .cta__left{display:flex;flex-direction:column;gap:calc(18px * var(--s));}
+  .cta__row{display:flex;align-items:center;gap:calc(16px * var(--s));}
+  .cta__row .k{
+    font-family:'Syne Mono',monospace;color:var(--muted);
+    font-size:calc(18px * var(--s));letter-spacing:calc(2px * var(--s));text-transform:uppercase;
+    min-width:calc(78px * var(--s));
+  }
+  .cta__row .v{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--offwhite);
+    font-size:calc(33px * var(--s));letter-spacing:calc(.5px * var(--s));
+  }
+  .cta__row .v.lime{color:var(--lime);}
+  .cta__scan{
+    font-family:'Syne Mono',monospace;color:var(--muted);
+    font-size:calc(17px * var(--s));letter-spacing:calc(2px * var(--s));text-transform:uppercase;
+    margin-top:calc(6px * var(--s));
+  }
+  .qr{
+    background:var(--cream);
+    padding:calc(16px * var(--s));border-radius:calc(4px * var(--s));
+    border:1px solid var(--hairline);
+    flex-shrink:0;text-align:center;
+  }
+  .qr img{
+    display:block;width:calc(216px * var(--s));height:calc(216px * var(--s));
+    image-rendering:pixelated;
+  }
+  .qr .coords{
+    font-family:'Syne Mono',monospace;color:var(--bg);opacity:.7;
+    font-size:calc(13px * var(--s));letter-spacing:calc(1px * var(--s));
+    margin-top:calc(8px * var(--s));text-transform:uppercase;
+  }
+
+  /* address + footer */
+  .address{
+    margin-top:calc(30px * var(--s));
+    font-family:'Syne Mono',monospace;color:var(--cream);opacity:.85;
+    font-size:calc(20px * var(--s));letter-spacing:calc(1px * var(--s));
+    display:flex;align-items:center;gap:calc(12px * var(--s));
+  }
+  .address .pin-mark{color:var(--lime);}
+  footer{
+    margin-top:calc(22px * var(--s));
+    padding-top:calc(22px * var(--s));
+    border-top:1px solid var(--hairline);
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:calc(12px * var(--s));
+    font-family:'Syne Mono',monospace;color:var(--muted);
+    font-size:calc(18px * var(--s));letter-spacing:calc(1.5px * var(--s));text-transform:uppercase;
+  }
+  footer .tag{color:var(--lime);}
+  footer .loc{display:flex;align-items:center;gap:calc(10px * var(--s));}
+</style>
+</head>
+<body>
+<div class="frame" id="frame">
+
+  <!-- Ondo map signature (texture, dialed down, still glowing) -->
+  <svg class="map" viewBox="0 0 420 530" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="8" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- sparse cartographic grid (texture) -->
+    <g stroke="rgba(202,255,0,0.05)" stroke-width="0.5" stroke-dasharray="3,9">
+      <line x1="0" y1="154" x2="420" y2="154"/>
+      <line x1="0" y1="269" x2="420" y2="269"/>
+      <line x1="0" y1="385" x2="420" y2="385"/>
+      <line x1="133" y1="0" x2="133" y2="530"/>
+      <line x1="267" y1="0" x2="267" y2="530"/>
+    </g>
+    <!-- Ondo State boundary (glows) -->
+    <path d="M 230,77 L 279,29 L 352,19 L 388,67 L 364,115 L 339,154 L 315,192
+             L 303,231 L 279,269 L 255,308 L 230,346 L 206,385 L 182,423
+             L 158,462 L 121,471 L 85,490 L 49,481 L 12,442 L 12,385
+             L 24,327 L 36,269 L 49,212 L 61,154 L 85,106 L 133,77 L 182,48 Z"
+          fill="rgba(26,92,42,0.35)" stroke="#CAFF00" stroke-width="1.2" filter="url(#glow)"/>
+    <!-- Owo LGA zone -->
+    <path d="M 277,212 L 310,190 L 345,198 L 355,222 L 340,250 L 315,262 L 288,258 L 268,238 Z"
+          fill="rgba(202,255,0,0.08)" stroke="rgba(202,255,0,0.5)" stroke-width="1" stroke-dasharray="4,3"/>
+    <!-- Owo pin (glows) -->
+    <g>
+      <circle cx="277" cy="212" r="30" fill="rgba(202,255,0,0.10)"/>
+      <circle cx="277" cy="212" r="16" fill="rgba(202,255,0,0.18)"/>
+      <circle cx="277" cy="212" r="6" fill="#CAFF00" filter="url(#glow)"/>
+      <circle cx="277" cy="212" r="3" fill="#CAFF00"/>
+      <text x="296" y="208" font-family="Syne Mono, monospace" font-size="13" fill="#CAFF00" opacity="0.65" letter-spacing="1">OWO · 7.1989°N</text>
+    </g>
+  </svg>
+
+  <div class="vignette"></div>
+  <div class="noise"></div>
+  <div class="scanlines"></div>
+
+  <div class="content">
+
+    <div class="top">
+      <div class="lockup">
+        <img src="./assets/crest.png" alt="Towards Excellence Academy crest">
+        <div class="word">Towards<br><b>Excellence</b><br>Academy</div>
+      </div>
+      <span class="pill pill--ghost mono">OWO · NG</span>
+    </div>
+
+    <p class="eyebrow"><span class="dot"></span> OWO · ONDO STATE, NIGERIA · EST. 2026</p>
+
+    <div class="hero">
+      <div class="session"><span class="pill">2026 / 2027 Academic Session</span></div>
+      <h1>
+        <span class="hl hl--admissions">ADMISSIONS</span>
+        <span class="hl hl--open">OPEN</span>
+      </h1>
+      <p class="sub">Now accepting <b>JSS 1</b> — Common Entrance candidates</p>
+    </div>
+
+    <p class="positioning">Quality education built on a <em>STEM-based</em> curriculum.</p>
+
+    <section class="why">
+      <h3>Why choose us</h3>
+      <div class="cell">
+        <span class="idx">01</span>
+        <div class="body">
+          <div class="t">STEM-Based Curriculum</div>
+          <div class="d">Science, technology, engineering &amp; maths at the core.</div>
+        </div>
+      </div>
+      <div class="cell">
+        <span class="idx">02</span>
+        <div class="body">
+          <div class="t">Highly Qualified Educators</div>
+          <div class="d">Experienced teachers invested in every student.</div>
+        </div>
+      </div>
+      <div class="cell">
+        <span class="idx">03</span>
+        <div class="body">
+          <div class="t">Modern Facilities &amp; Serene Environment</div>
+          <div class="d">Well-equipped classrooms in a calm, focused setting.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta">
+      <div class="cta__left">
+        <div class="cta__row"><span class="k">Call</span><span class="v lime">0816 125 9905</span></div>
+        <div class="cta__row"><span class="k">Visit</span><span class="v">tea-landing-psi.vercel.app</span></div>
+        <p class="cta__scan">Scan to visit · admissions &amp; enquiries</p>
+      </div>
+      <div class="qr">
+        <img src="./assets/qr-site.png" alt="QR code to tea-landing-psi.vercel.app">
+        <div class="coords">tea-landing-psi.vercel.app</div>
+      </div>
+    </div>
+
+    <p class="address"><span class="pin-mark">▸</span> 66 Oke Ogun Street, Owo — directly opposite Technical College, Owo</p>
+
+    <footer>
+      <span class="loc"><span class="dot"></span> Wishing every Common Entrance candidate the very best</span>
+      <span class="tag">#TowardsExcellence</span>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+  // Dimensions are query-driven so the same file emits the story flyer and the
+  // campaign banners. ?w=1080&h=1920 (default) · scale = min(w/1080, h/1920).
+  (function(){
+    var q = new URLSearchParams(location.search);
+    var w = parseInt(q.get('w'),10) || 1080;
+    var h = parseInt(q.get('h'),10) || 1920;
+    var s = Math.min(w/1080, h/1920);
+    var r = document.documentElement.style;
+    r.setProperty('--w', w + 'px');
+    r.setProperty('--h', h + 'px');
+    r.setProperty('--s', String(s));
+    document.title = 'TEA — Admissions Open ('+w+'x'+h+')';
+  })();
+</script>
+</body>
+</html>
